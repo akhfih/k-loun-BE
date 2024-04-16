@@ -1,0 +1,35 @@
+version: '3'
+services:
+
+  postgresql:
+    image: postgres
+    container_name: postgresql
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=db_klound
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+
+  k-lound-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: k-lound-app
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=postgresql
+      - DB_PORT=5432
+      - DB_NAME=db_klound
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=root
+      - FIREBASE_BUCKETNAME=k-lound.appspot.com
+      - FIREBASE_JSON_PATH=/app/target/kloun-0.0.1-SNAPSHOT.jar
+      - PORT=8080
+    depends_on:
+      - postgresql
+
+volumes:
+  postgresql-data:
